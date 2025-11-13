@@ -1,18 +1,46 @@
 class Solution {
+
+    // //recursive solution
+    //t.c - O(2^n)
+    // int recur(int ind){
+    //     if(ind==0 || ind ==1)return 1;
+    //     return recur(ind-1)+ recur(ind-2);
+        
+    // }
+    //dp with memorisation
+
+
+
 public:
     
-    long long combinator(int n, int r) {
-        long long res = 1;
-        for (int i = 1; i <= r; i++) {
-            res = res * (n - r + i) / i;
-        }
-        return res;
-    }
+    
     int climbStairs(int n) {
-        int ans = 0;
-        for (int i = 0; i <= n / 2; i++) {
-            ans += combinator(n - i, i);
-        }
-        return ans;
+    //recursive
+    // return recur(n);
+
+    //dp with tabulation
+    //t.c- O(n)
+    //s.c - O(n);
+    // vector<int>dp(n+1,-1);
+    // dp[0]=1;
+    // dp[1]=1;
+    // for(int i=2;i<=n;i++){
+    //     dp[i]=dp[i-1]+dp[i-2];
+    // }
+    // return dp[n];
+
+    //more space optimised
+    //t.c- O(n);
+    //s.c - O(1);
+
+    int prev=1,prev2=1;
+    int curri;
+    for(int i=2;i<=n;i++){
+        curri = prev+prev2;
+        prev2=prev;
+        prev = curri;
+        
+    } 
+    return prev;
     }
 };
