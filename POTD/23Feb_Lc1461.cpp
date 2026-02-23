@@ -1,0 +1,14 @@
+//Check If a String Contains All Binary Codes of Size K
+class Solution {
+public:
+    bool hasAllCodes(string s, int k) {
+        int n = s.length();
+        if((n-k+1)<(1<<k))return false;
+        unordered_set<string>st;
+        for(int i=0;i<=n-k;i++){
+            string temp = s.substr(i,k);
+            st.insert(temp);
+        }
+        return st.size()==(1<<k);
+    }
+};
