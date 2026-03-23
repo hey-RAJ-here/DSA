@@ -1,42 +1,69 @@
-//Implement k Queues in a Single Array
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
-class kQueues {
-  public:
-    vector<vector<int>> kque; // store k queues
-    int n, k;                 // total size and number of queues
+using namespace std;
 
-    kQueues(int n, int k) {
-        this->n = n;
-        this->k = k;
-        kque.resize(k);       // initialize k queues
+long long solve(int N, int K, long long* A) {
+    if (N == 0) return 0;
+    
+    long long low_bound = 0;
+    long long min_val = A[0];
+    long long max_val = A[0];
+    
+    for (int i = 0; i < N; ++i) {
+        if (A[i] < min_val) min_val = A[i];
+        if (A[i] > max_val) max_val = A[i];
     }
-
-    void enqueue(int x, int i) {
-        // enqueue element x into queue i
-        kque[i].push_back(x);
-    }
-
-    int dequeue(int i) {
-        // dequeue element from queue i
-        if (kque[i].empty())
-            return -1;
-
-        int front = kque[i][0];
-        kque[i].erase(kque[i].begin()); // remove front of ith queue
-        return front;
-    }
-
-    bool isEmpty(int i) {
-        // check if queue i is empty
-        return kque[i].empty();
-    }
-
-    bool isFull() {
-        // check if total elements == n
-        int size = 0;
-        for (int i = 0; i < k; i++) {
-            size += kque[i].size();
+    
+    long long high_bound = max_val - min_val;
+    long long optimal_instability = high_bound;
+    
+    while (low_bound <= high_bound) {
+        long long mid_limit = low_bound + (high_bound - low_bound) / 2;
+        
+        int window_count = 1;
+        long long current_min = A[0];
+        long long current_max = A[0];
+        
+        for (int i = 1; i < N; ++i) {
+            long long next_min = (A[i] < current_min) ? A[i] : current_min;
+            long long next_max = (A[i] > current_max) ? A[i] : current_max;
+            
+            if (next_max - next_min <= mid_limit) {
+                current_min = next_min;
+                current_max = next_max;
+            } else {
+                window_count++;
+                current_min = A[i];
+                current_max = A[i];
+            }
         }
-        return size == n;
+        
+        if (window_count <= K) {
+            optimal_instability = mid_limit;
+            high_bound = mid_limit - 1;
+        } else {
+            low_bound = mid_limit + 1;
+        }
     }
-};
+    
+    return optimal_instability;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int N, K;
+    if (!(cin >> N >> K)) return 0;
+    
+    vector<long long> A(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+    }
+    
+    cout << solve(N, K, A.data()) << endl;
+    
+    return 0;
+}
